@@ -11,25 +11,25 @@
 # последней стадии созревания)
 
 class Tomato:
-    global states
-    states = {'first': 'first state',
-              'second': 'second state',
-              'third': 'third state'}
+    # global states
+    states = {0: 'first state',
+              1: 'second state',
+              2: 'third state'}
 
     def __init__(self, index):
         self._index = index
-        self._state = states['first']
+        self._state = self.states[0]
 
     def grow(self):
-        if self._state == states['first']:
-            self._state = states['second']
+        if self._state == self.states[0]:
+            self._state = self.states[1]
             return self._state
-        elif self._state == states['second']:
-            self._state = states['third']
+        elif self._state == self.states[1]:
+            self._state = self.states[2]
             return self._state
 
     def is_ripe(self):
-        if self._state == states['third']:
+        if self._state == self.states[2]:
             return 'Созрел!'
         else:
             return 'Ещё не созрел!'
