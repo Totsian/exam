@@ -11,28 +11,36 @@
 # последней стадии созревания)
 
 class Tomato:
-    # global states
     states = {0: 'first state',
               1: 'second state',
               2: 'third state'}
 
     def __init__(self, index):
         self._index = index
-        self._state = self.states[0]
+        self._state = 0
 
     def grow(self):
-        if self._state == self.states[0]:
-            self._state = self.states[1]
-            return self._state
-        elif self._state == self.states[1]:
-            self._state = self.states[2]
-            return self._state
+        self._change_state()
+        # if self._state == self.states[0]:
+        #     self._state = self.states[1]
+        #     return self._state
+        # elif self._state == self.states[1]:
+        #     self._state = self.states[2]
+        #     return self._state
 
     def is_ripe(self):
-        if self._state == self.states[2]:
+        if self._state == 3:
             return 'Созрел!'
         else:
             return 'Ещё не созрел!'
+
+    def _change_state(self):
+        if self._state < 3:
+            self._state += 1
+        self._print_state()
+
+    def _print_state(self):
+        print(f'Tomato {self._index} in {Tomato.states[self._state]}')
 
 
 # Класс TomatoBush
@@ -47,35 +55,32 @@ class Tomato:
 # 5. Создайте метод give_away_all(), который будет чистить список томатов после
 # сбора урожая
 
-class TomatoBush(Tomato):
+class TomatoBush:
 
     def __init__(self, count_tomato):
-        super().__init__(index=self._index)
-        self.count_tomato = count_tomato
-        self.tomatoes = []
-        i = 0
-        while i != count_tomato:
-            self.tomatoes.append(self._state)
-            i += 1
+        # super().__init__(index=self._index)
+        # self.count_tomato = count_tomato
+        self.tomatoes = [Tomato(index) for index in range(1, count_tomato)]
+        # i = 0
+        # while i != count_tomato:
+        #     self.tomatoes.append(self._state)
+        #     i += 1
 
     def grow_all(self):
-        for i in self.tomatoes:
-            if i == self.states['first']:
-                i = self.states['second']
-                return i
-            elif i == self.states['second']:
-                i = self.states['third']
-                return i
+        for tomato in self.tomatoes:
+            tomato.grow()
 
     def all_are_ripe(self):
-        for i in self.tomatoes:
-            if i == self.states['third']:
-                return True
-            else:
-                return False
+        return all([tomato.is_ripe() for tomato in self.tomatoes])
+        # for i in self.tomatoes:
+        #     i.is_ripe()
+        #     # if i == self.states['third']:
+        #     #     return True
+        #     # else:
+        #     #     return False
 
     def give_away_all(self):
-        del self.tomatoes[0:]
+        self.tomatoes = []
 
 
 # Класс Gardener
@@ -90,19 +95,21 @@ class TomatoBush(Tomato):
 # 5. Создайте статический метод knowledge_base(), который выведет в консоль справку
 # по садоводству.
 
-class Gardener(TomatoBush):
+class Gardener:
 
-    def __init__(self, name, state):
-        super().__init__(state)
+    def __init__(self, name, plant):
         self.name = name
-        self._plant = Tomato(name, state)
+        self._plant = plant
 
-    def world(self):
-        return self.grow_all()
+    def work(self):
+        print('Садовник работает.')
+        self._plant.grow_all()
+        print('Садочник закончил работу.')
 
     def harvest(self):
-        if self.all_are_ripe():
-            self.give_away_all()
+        print('Сбор урожая!')
+        if self._plant.all_are_ripe():
+            self._plant.give_away_all()
             return 'Урожай собран'
         else:
             return 'Помидоры ещё не созрели!'
@@ -112,13 +119,11 @@ class Gardener(TomatoBush):
         return 'Справка по садоводству.'
 
 
-tomato = Tomato(1)
-print(tomato.grow())
-print(tomato.is_ripe())
-# garden = Gardener('tomato', 'first')
-# tomato_bush = TomatoBush(5)
-# print(tomato_bush.grow_all())
-#
-# print(garden.knowledge_base())
-# print(garden.grow_all())
-# print(garden.harvest())
+Gardener.knowledge_base()
+tomato_bash = TomatoBush(6)
+gardener = Gardener('Tom', tomato_bash)
+gardener.work()
+print(gardener.harvest())
+gardener.work()
+gardener.work()
+print(gardener.harvest())
